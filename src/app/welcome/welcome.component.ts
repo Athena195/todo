@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { WelcomeDataService } from '../service/data/welcome-data.service';
 // import {AppComponent} from '../app.component';
 @Component({
   selector: 'app-welcome',
@@ -9,11 +10,37 @@ import { ActivatedRoute } from '@angular/router';
 export class WelcomeComponent implements OnInit {
   message = 'Some Welcome Message';
   name = ''
+  welcomeMessageFromService = ''
   // ActivateRoute
-  constructor(private route: ActivatedRoute) { }
+  constructor(
+    private route: ActivatedRoute,
+    private service:WelcomeDataService
+  ) { }
 
   ngOnInit() {
     this.name = this.route.snapshot.params['name']
   }
 
+  getWelcomeMessage() {
+    this.service.executeHelloWorldBeanService().subscribe(
+      response => this.handleSuccessfulResponse(response),
+      error => this.handleErrorResponse(error)
+      );
+  }
+
+  handleSuccessfulResponse(response) {
+    this.welcomeMessageFromService = response.message
+  }
+
+  handleErrorResponse(error) {
+    this.welcomeMessageFromService = error.error.message;
+    
+  }
+
+  getWelcomeMessageWithParameter() {
+    this.service.executeHelloWorldServiceWithPathVariable(this.name).subscribe(
+      response => this.handleSuccessfulResponse(response),
+      error => this.handleErrorResponse(error)
+    )
+  }
 }
